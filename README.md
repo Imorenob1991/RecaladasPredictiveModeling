@@ -18,7 +18,7 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utiliz
 
   <img width="629" alt="Imagen_Sitio" src="https://github.com/user-attachments/assets/7d98c61e-3d0b-49dd-89c2-95cad6d1aab9">
 
-- Se analizan otras variables relacionadas a la fecha, analizando el cumplimiento por mes, día del mes, día de la semana y período del mes (inicio, mitad, fin). Sin embargo, no se encontraron diferencias significativas en estas variables que justifiquen su inclusión en el análisis final.
+- Se analizan otras variables relacionadas a la fecha, analizando el cumplimiento por mes, día del mes, día de la semana y período del mes (inicio, mitad, fin). Sin embargo, no se encontraron diferencias significativas en estas variables que justifiquen su inclusión en el modelo predictivo.
 
 - Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO
 
