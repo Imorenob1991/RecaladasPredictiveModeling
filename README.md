@@ -33,7 +33,7 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utiliz
 
 <img width="680" alt="resumen_modelos_predictivos" src="https://github.com/user-attachments/assets/c2e52b64-829b-4a3f-befe-f21370428721">
 
-- El modelo que tuvo mejor performance con las bases de datos de prueba fue el XG Boost.
+- El modelo que tuvo mejor performance con las bases de datos de prueba fue el XG Boost, logrando predecir el 66% de los casos de manera correcta.
 
 - Es importante considerar, que mediante la incoporación de más variables se podría enriquecer el modelo, aumentando su precisión.
 
