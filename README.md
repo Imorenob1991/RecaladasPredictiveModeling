@@ -14,9 +14,9 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utiliz
 
 - Se observa una diferencia considerable entre el cumplimiento dependiendo de la Agencia y Sitio:
 
-  <img width="626" alt="Imagen_Agencia" src="https://github.com/user-attachments/assets/91984483-0826-4759-bb23-7a7f656516a7">
+<img width="562" alt="Cumplimiento_Agencia2" src="https://github.com/user-attachments/assets/b65573d7-c143-4399-8602-3c377adf64a1">
 
-  <img width="629" alt="Imagen_Sitio" src="https://github.com/user-attachments/assets/7d98c61e-3d0b-49dd-89c2-95cad6d1aab9">
+<img width="560" alt="Cumplimiento_Sitio" src="https://github.com/user-attachments/assets/0d247bf4-7519-4552-bcf4-4e2f4b78fabd">
 
 - Se analizan otras variables relacionadas a la fecha, analizando el cumplimiento por mes, día del mes, día de la semana y período del mes (inicio, mitad, fin). Sin embargo, no se encontraron diferencias significativas en estas variables que justifiquen su inclusión en el modelo predictivo.
 
@@ -56,6 +56,10 @@ This project analyzes docking data at the Port of San Antonio(Chile), using pred
 - Compliance was then analyzed based on the Agency and Docking Site. Before this, it was necessary to create data maintainers to standardize the data (Example: ("AGENCIAS MARITIMAS AGENTAL LIMITADA", "AGENTAL") ~ "AGENTAL").
 
 - A considerable difference in compliance is observed depending on the Agency and Docking Site:
+
+<img width="562" alt="Cumplimiento_Agencia2" src="https://github.com/user-attachments/assets/e40717d1-a508-4d73-b374-586247d33de6">
+
+<img width="560" alt="Cumplimiento_Sitio" src="https://github.com/user-attachments/assets/9465083a-2e6d-40e6-b898-9749f361aec7">
 
 
 
