@@ -39,13 +39,21 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utiliz
 
 - Del modelo actual, la variable con más relevancia en el modelo predictivo XG Boost es la variable Cluster_AGENCIA con un 59%, luego Cluster_SITIOS con un 32% y finalmente la variable Ingresos_Salida con un 9%
 
-_________________________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________________________________________________________________________
 
 # RecaladasPredictiveModeling (English)
 This project analyzes docking data at the Port of San Antonio, using predictive modeling techniques and statistical analysis to evaluate compliance with estimated entry and exit dates. It includes decision tree models, Random Forest, and XGBoost to improve accuracy in predicting service levels.
 
 # Descriptive analysis and data wrangling 
 - Date range of data between 2023-01-01 and 2024-08-21
+
+- Service level rule: If the Estimated Date equals the Actual Date, a value of 1 is assigned to the "Cumple(compliance)" column; otherwise, 0 is assigned.
+
+- Out of the total 2,988 services, only 36.2% met the Estimated Date.
+
+- There is a noticeable difference in compliance between Entries (41.2%) and Exits (31.1%).
+
+
 
 
 
