@@ -42,7 +42,7 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utiliz
 ___________________________________________________________________________________________________________________________________________________________________________________
 
 # RecaladasPredictiveModeling (English)
-This project analyzes docking data at the Port of San Antonio, using predictive modeling techniques and statistical analysis to evaluate compliance with estimated entry and exit dates. It includes decision tree models, Random Forest, and XGBoost to improve accuracy in predicting service levels.
+This project analyzes docking data at the Port of San Antonio(Chile), using predictive modeling techniques and statistical analysis to evaluate compliance with estimated entry and exit dates. It includes decision tree models, Random Forest, and XGBoost model to improve accuracy in predicting service levels.
 
 # Descriptive analysis and data wrangling 
 - Date range of data between 2023-01-01 and 2024-08-21
@@ -52,6 +52,12 @@ This project analyzes docking data at the Port of San Antonio, using predictive 
 - Out of the total 2,988 services, only 36.2% met the Estimated Date.
 
 - There is a noticeable difference in compliance between Entries (41.2%) and Exits (31.1%).
+
+- Compliance was then analyzed based on the Agency and Docking Site. Before this, it was necessary to create data maintainers to standardize the data (Example: ("AGENCIAS MARITIMAS AGENTAL LIMITADA", "AGENTAL") ~ "AGENTAL").
+
+- A considerable difference in compliance is observed depending on the Agency and Docking Site:
+
+
 
 
 
