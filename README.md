@@ -1,8 +1,8 @@
-# RecaladasPredictiveModeling
+# RecaladasPredictiveModeling (Spanish)
 Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utilizando técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de fechas estimadas de ingreso y salida. Incluye modelos de árboles de decisión, Random Forest y XGBoost para mejorar la precisión en la predicción del nivel de servicio.
 
 # Análisis Descriptivo y Preparación de los Datos:
-- Los Valores proporcionados se encuentran dentro del rango de fecha 2023-01-01 al 2024-08-21
+- Rango de fecha datos entre el 2023-01-01 al 2024-08-21
 
 - Regla de cumplimiento nivel de servicio: Sí, Fecha Estimada = Fecha Efectiva, se asigna 1 a la columna cumple, de lo contrario 0.
 
@@ -39,7 +39,14 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utiliz
 
 - Del modelo actual, la variable con más relevancia en el modelo predictivo XG Boost es la variable Cluster_AGENCIA con un 59%, luego Cluster_SITIOS con un 32% y finalmente la variable Ingresos_Salida con un 9%
 
-<img width="585" alt="Screenshot 2024-08-27 at 21 53 13" src="https://github.com/user-attachments/assets/d53157f8-357c-479d-8e6b-0b981e5a25b1">
+_________________________________________________________________________________________________________________________________
 
-- Finalmente, en el script se puede visualizar como el modelo toma una base de datos dummy, con estas variables y utiliza el modelo entrenado para su predicción.
+# RecaladasPredictiveModeling (English)
+This project analyzes docking data at the Port of San Antonio, using predictive modeling techniques and statistical analysis to evaluate compliance with estimated entry and exit dates. It includes decision tree models, Random Forest, and XGBoost to improve accuracy in predicting service levels.
+
+# Descriptive analysis and data wrangling 
+- Date range of data between 2023-01-01 and 2024-08-21
+
+
+
 
