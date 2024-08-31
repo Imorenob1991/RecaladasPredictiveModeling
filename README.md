@@ -18,9 +18,9 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utiliz
 
 <img width="560" alt="Cumplimiento_Sitio" src="https://github.com/user-attachments/assets/0d247bf4-7519-4552-bcf4-4e2f4b78fabd">
 
-- Se analizan otras variables relacionadas a la fecha, analizando el cumplimiento por mes, día del mes, día de la semana y período del mes (inicio, mitad, fin). Sin embargo, no se encontraron diferencias significativas en estas variables que justifiquen su inclusión en el modelo predictivo.
+- Se analizan otras variables relacionadas a la fecha, analizando el cumplimiento por mes, día del mes, día de la semana y período del mes (inicio, mitad, fin). La unica variablidad detectada es en función del día de la semana, por lo cual se incorporará esta variable al modelo predictivo.
 
-- Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO
+- Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA,  Cluster_SITIO y weekday
 
 # Modelo Predictivo Cumplimiento de Fechas Estimadas
 
@@ -61,6 +61,11 @@ This project analyzes docking data at the Port of San Antonio(Chile), using pred
 
 <img width="560" alt="Cumplimiento_Sitio" src="https://github.com/user-attachments/assets/9465083a-2e6d-40e6-b898-9749f361aec7">
 
+- Other date-related variables were analyzed, examining compliance by month, day of the month, day of the week, and period of the month (beginning, middle, end). The only variability detected was based on the day of the week, so this variable will be included in the predictive model.
+
+- Finally, a predictive model will be developed based on the following variables: Entry or Exit, Cluster_AGENCY, Cluster_SITE, and weekday.
+
+# Modelo Predictivo Cumplimiento de Fechas Estimadas
 
 
 
