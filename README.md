@@ -8,20 +8,21 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se uti
 - Limpieza de NAs: Se observan 227 servicios sin información de Sitio de Recalada.
 - Outliers: Se estima que un servicio con un adelanto mayor a 3 días o un retraso mayor a 5 días podría considerarse como un dato atípico. Sin embargo, se evaluará si su exclusión mejora el resultado del modelo. En el siguiente gráfico, el 0 representa el cumplimiento exacto en el día estimado:
 
-<img width="607" alt="Gráfico_Histograma_Atraoss:Adelantos" src="https://github.com/user-attachments/assets/63c91ae7-c32d-4a33-b15c-a25108b7ea44">
+  <img width="607" alt="Gráfico_Histograma_Atraoss:Adelantos" src="https://github.com/user-attachments/assets/63c91ae7-c32d-4a33-b15c-a25108b7ea44">
 
 - Luego se analizaron los cumplimientos en base a la Agencia y al Sitio de recalada. Previo, fue necesario generar mantenedores para homologar los datos (Ejemplo: ("AGENCIAS MARITIMAS AGENTAL LIMITADA", "AGENTAL") ~ "AGENTAL",)
 - Se observa una diferencia considerable entre el cumplimiento dependiendo de la Agencia y Sitio:
 
+  <img width="560" alt="Screenshot 2024-09-05 at 22 20 52" src="https://github.com/user-attachments/assets/bc3ac583-ea50-42ab-a56c-b8ccdc254532"><img width="564" alt="Screenshot 2024-09-05 at 22 21 37" src="https://github.com/user-attachments/assets/4c800142-9397-490d-bf71-b3a1e26812cf">
 
 ## Correlación con Variables Temporales y Meteorológicas:
+- Se analizaron distintar variables para entender si había una correlación entre ellas y el cunplimiento del nivel de servicio. El resultado no fue satisfactorio y no se identificaron correlaciones con el cumplimiento.
 
-
-
-
-- Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO
+<img width="720" alt="Screenshot 2024-09-05 at 22 29 53" src="https://github.com/user-attachments/assets/dddb14ae-448b-4fcd-8034-9a00537545cb">
 
 # Modelo Predictivo Cumplimiento de Fechas Estimadas
+
+- Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO
 
 - Primero, se separan los datos entre la data de entrenamiento(80%) y prueba(20%)
 
