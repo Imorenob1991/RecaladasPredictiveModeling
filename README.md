@@ -1,48 +1,48 @@
 # RecaladasPredictiveModeling (Spanish)
-Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se utilizaron técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de fechas estimadas de ingreso y salida. Se analizaron los siguientes modelos predictivos: árboles de decisión, Random Forest y XGBoost. Se entrenan los modelos con el 80% de la base de datos y luego se prueba su asertividad con el 20% de la base de datos restante.
+Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se han utilizado técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de las fechas estimadas de ingreso y salida. Los modelos predictivos analizados incluyen árboles de decisión, Random Forest y XGBoost. Los modelos fueron entrenados con el 80% de los datos disponibles y posteriormente evaluados en cuanto a su precisión con el 20% restante de la base de datos.
 
 # Análisis Descriptivo y Preparación de los Datos:
-- Rango de fecha datos entre el 2023-01-01 al 2024-08-21
-- Cumple Nivel de Servicio[1] : Fecha Efectiva <= Fecha Estimada.
-- Adelantos: Fecha Efectiva < Fecha Estimada (Importante su análisis dado que afectan también a la planificación)
-- Limpieza de NAs: Se observan 227 servicios sin información de Sitio de Recalada.
-- Outliers: Se estima que un servicio con un adelanto mayor a 3 días o un retraso mayor a 5 días podría considerarse como un dato atípico. Sin embargo, se evaluará si su exclusión mejora el resultado del modelo. En el siguiente gráfico, el 0 representa el cumplimiento exacto en el día estimado:
+- Rango de fechas: Datos comprendidos entre el 01-01-2023 y el 21-08-2024.
+- Cumplimiento del Nivel de Servicio: Se considera que se cumple cuando la fecha efectiva es menor o igual a la fecha estimada.
+- Adelantos: Ocurren cuando la fecha efectiva es anterior a la fecha estimada. Es importante analizarlos, ya que también afectan la planificación.
+- Limpieza de NAs: Se detectaron 227 servicios sin información de sitio de recalada.
+- Outliers: Un servicio con un adelanto mayor a 3 días o un retraso mayor a 5 días se considera un dato atípico. Se evaluará si su exclusión mejora los resultados del modelo. En el gráfico siguiente, el valor 0 representa el cumplimiento exacto en el día estimado.
 
   <img width="607" alt="Gráfico_Histograma_Atraoss:Adelantos" src="https://github.com/user-attachments/assets/63c91ae7-c32d-4a33-b15c-a25108b7ea44">
 
-- Luego se analizaron los cumplimientos en base a la Agencia y al Sitio de recalada. Previo, fue necesario generar mantenedores para homologar los datos (Ejemplo: ("AGENCIAS MARITIMAS AGENTAL LIMITADA", "AGENTAL") ~ "AGENTAL",)
-- Se observa una diferencia considerable entre el cumplimiento dependiendo de la Agencia y Sitio:
+- Análisis por Agencia y Sitio de Recalada: Se analizaron los cumplimientos según la agencia y el sitio de recalada. Previamente, fue necesario normalizar los datos para homogeneizarlos (por ejemplo, "AGENCIAS MARITIMAS AGENTAL LIMITADA" se normaliza a "AGENTAL").
+- Diferencias Significativas: Se observó una diferencia considerable en el cumplimiento dependiendo de la agencia y el sitio:
 
   <img width="560" alt="Screenshot 2024-09-05 at 22 20 52" src="https://github.com/user-attachments/assets/bc3ac583-ea50-42ab-a56c-b8ccdc254532"><img width="564" alt="Screenshot 2024-09-05 at 22 21 37" src="https://github.com/user-attachments/assets/4c800142-9397-490d-bf71-b3a1e26812cf">
 
 ## Correlación con Variables Temporales y Meteorológicas:
-- Se analizaron distintar variables para entender si había una correlación entre ellas y el cumplimiento del nivel de servicio. El resultado no fue satisfactorio dado que no se detectaron correlaciones con el Cumplimiento.
+- Se analizaron diferentes variables para entender si existía una correlación con el cumplimiento del nivel de servicio. El análisis no arrojó resultados significativos, ya que no se detectaron correlaciones relevantes con el cumplimiento: 
 
   <img width="720" alt="Screenshot 2024-09-05 at 22 29 53" src="https://github.com/user-attachments/assets/dddb14ae-448b-4fcd-8034-9a00537545cb">
 
 # Modelo Predictivo Cumplimiento de Fechas Estimadas
 
-- Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO
+El modelo predictivo se basa en las siguientes variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO.
 
-- Primero, se separan los datos entre la data de entrenamiento(80%) y prueba(20%)
+División de Datos: Los datos se separaron en un conjunto de entrenamiento (80%) y un conjunto de prueba (20%).
 
-- Se realizaron 3 modelos predictivos, de modelos más simples a más complejos:
-  1. Arbol de Decisión.
-  2. Random Forest
-  3. XG Boost
+Modelos Evaluados:
+
+- Árbol de Decisión
+- Random Forest
+- XGBoost
 
   <img width="621" alt="Screenshot 2024-09-05 at 22 43 06" src="https://github.com/user-attachments/assets/6349144d-5498-4577-8df2-b1bcb4713a63">
 
-- El modelo que tuvo mejor performance con las bases de datos de prueba fue Random Forest, logrando predecir el 66% de los casos de manera correcta.
+- Mejor Desempeño: El modelo Random Forest mostró el mejor rendimiento, logrando predecir correctamente el 66% de los casos en la base de datos de prueba.
 
-- Del modelo actual, la variable con más relevancia en el modelo predictivo XG Boost es la variable Cluster_AGENCIA con un 45%, luego Cluster_SITIOS con un 44% y finalmente la variable Ingresos_Salida con un 11%
+- Importancia de Variables: En el modelo XGBoost, la variable más relevante fue Cluster_AGENCIA (45%), seguida por Cluster_SITIO (44%) y, finalmente, Ingresos_Salida (11%).
 
 Conclusiónes:
-1. Mediante las variables Tipo de servicio (Ingreso / Salida), Agencia y Sitio de recalada, pudimos elaborar un modelo que logra predecir el 66% de los casos (aún mucho por mejorar)
-2. La hipótesis previa, fue que las condiciones climáticas como la velocidad del Viento, su direccción y precipitaciones, afectan en el cumplimiento del nivel de servicio.
-3. Sin embargo, no pudimos comprobar esta hipótesis estadísticamente.
-4. Pasos a seguir, incorporar variables que permitan aumentar asertividad del modelo.
-
+1. Con las variables tipo de servicio (Ingreso/Salida), agencia y sitio de recalada, se logró elaborar un modelo que predice correctamente el 66% de los casos, aunque aún hay espacio para mejoras.
+2. La hipótesis inicial fue que las condiciones climáticas, como la velocidad del viento, su dirección y las precipitaciones, influirían en el cumplimiento del nivel de servicio.
+3. Sin embargo, no se pudo demostrar esta hipótesis de manera estadística.
+4. Próximos Pasos: Incorporar variables adicionales que puedan mejorar la precisión del modelo.
 
 ___________________________________________________________________________________________________________________________________________________________________________________
 
