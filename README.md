@@ -16,9 +16,9 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se uti
   <img width="560" alt="Screenshot 2024-09-05 at 22 20 52" src="https://github.com/user-attachments/assets/bc3ac583-ea50-42ab-a56c-b8ccdc254532"><img width="564" alt="Screenshot 2024-09-05 at 22 21 37" src="https://github.com/user-attachments/assets/4c800142-9397-490d-bf71-b3a1e26812cf">
 
 ## Correlación con Variables Temporales y Meteorológicas:
-- Se analizaron distintar variables para entender si había una correlación entre ellas y el cunplimiento del nivel de servicio. El resultado no fue satisfactorio y no se identificaron correlaciones con el cumplimiento.
+- Se analizaron distintar variables para entender si había una correlación entre ellas y el cumplimiento del nivel de servicio. El resultado no fue satisfactorio dado que no se detectaron correlaciones con el Cumplimiento.
 
-<img width="720" alt="Screenshot 2024-09-05 at 22 29 53" src="https://github.com/user-attachments/assets/dddb14ae-448b-4fcd-8034-9a00537545cb">
+  <img width="720" alt="Screenshot 2024-09-05 at 22 29 53" src="https://github.com/user-attachments/assets/dddb14ae-448b-4fcd-8034-9a00537545cb">
 
 # Modelo Predictivo Cumplimiento de Fechas Estimadas
 
@@ -31,13 +31,18 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se uti
   2. Random Forest
   3. XG Boost
 
-<img width="680" alt="resumen_modelos_predictivos" src="https://github.com/user-attachments/assets/c2e52b64-829b-4a3f-befe-f21370428721">
+  <img width="621" alt="Screenshot 2024-09-05 at 22 43 06" src="https://github.com/user-attachments/assets/6349144d-5498-4577-8df2-b1bcb4713a63">
 
-- El modelo que tuvo mejor performance con las bases de datos de prueba fue el XG Boost, logrando predecir el 66% de los casos de manera correcta.
+- El modelo que tuvo mejor performance con las bases de datos de prueba fue Random Forest, logrando predecir el 66% de los casos de manera correcta.
 
-- Es importante considerar, que mediante la incoporación de más variables se podría enriquecer el modelo, aumentando su precisión.
+- Del modelo actual, la variable con más relevancia en el modelo predictivo XG Boost es la variable Cluster_AGENCIA con un 45%, luego Cluster_SITIOS con un 44% y finalmente la variable Ingresos_Salida con un 11%
 
-- Del modelo actual, la variable con más relevancia en el modelo predictivo XG Boost es la variable Cluster_AGENCIA con un 59%, luego Cluster_SITIOS con un 32% y finalmente la variable Ingresos_Salida con un 9%
+Conclusiónes:
+1. Mediante las variables Tipo de servicio (Ingreso / Salida), Agencia y Sitio de recalada, pudimos elaborar un modelo que logra predecir el 66% de los casos (aún mucho por mejorar)
+2. La hipótesis previa, fue que las condiciones climáticas como la velocidad del Viento, su direccción y precipitaciones, afectan en el cumplimiento del nivel de servicio.
+3. Sin embargo, no pudimos comprobar esta hipótesis estadísticamente.
+4. Pasos a seguir, incorporar variables que permitan aumentar asertividad del modelo.
+
 
 ___________________________________________________________________________________________________________________________________________________________________________________
 
