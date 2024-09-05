@@ -1,5 +1,5 @@
 # RecaladasPredictiveModeling (Spanish)
-Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se han utilizado técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de las fechas estimadas de ingreso y salida. Los modelos predictivos analizados incluyen árboles de decisión, Random Forest y XGBoost. Los modelos fueron entrenados con el 80% de los datos disponibles y posteriormente evaluados en cuanto a su precisión con el 20% restante de la base de datos.
+Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se han utilizado técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de las fechas estimadas de ingreso y salida. Modelos de Machine Learning utilizados: árboles de decisión, Random Forest y XGBoost. Los modelos fueron entrenados con el 80% de los datos disponibles y posteriormente evaluados en cuanto a su precisión con el 20% restante de la base de datos.
 
 # Análisis Descriptivo y Preparación de los Datos:
 - Rango de fechas: Datos comprendidos entre el 01-01-2023 y el 21-08-2024.
@@ -47,7 +47,7 @@ Conclusiónes:
 ___________________________________________________________________________________________________________________________________________________________________________________
 
 # RecaladasPredictiveModeling (English)
-This project analyzes the berthing data at the Port of San Antonio. Predictive modeling techniques and statistical analysis have been used to evaluate the adherence to estimated entry and exit dates. The predictive models analyzed include decision trees, Random Forest, and XGBoost. The models were trained with 80% of the available data and then evaluated for accuracy using the remaining 20% of the dataset.
+This project analyzes the berthing data at the Port of San Antonio. Predictive modeling techniques and statistical analysis have been used to evaluate compliance with estimated entry and exit dates. Machine Learning models used include decision trees, Random Forest, and XGBoost. The models were trained with 80% of the available data and subsequently evaluated for accuracy using the remaining 20% of the dataset.
 
 # Descriptive Analysis and Data Wrangling
 - Date Range: Data covers the period from 01-01-2023 to 21-08-2024.
