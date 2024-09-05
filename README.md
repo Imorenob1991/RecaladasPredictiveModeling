@@ -1,26 +1,25 @@
 # RecaladasPredictiveModeling (Spanish)
-Este proyecto analiza los datos de recaladas en el Puerto de San Antonio, utilizando técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de fechas estimadas de ingreso y salida. Incluye modelos de árboles de decisión, Random Forest y XGBoost para mejorar la precisión en la predicción del nivel de servicio.
+Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se utilizaron técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de fechas estimadas de ingreso y salida. Se analizaron los siguientes modelos predictivos: árboles de decisión, Random Forest y XGBoost. Se entrenan los modelos con el 80% de la base de datos y luego se prueba su asertividad con el 20% de la base de datos de prueba.
 
 # Análisis Descriptivo y Preparación de los Datos:
 - Rango de fecha datos entre el 2023-01-01 al 2024-08-21
+- Cumple Nivel de Servicio[1] : Fecha Efectiva <= Fecha Estimada.
+- Adelantos: Fecha Efectiva < Fecha Estimada (Importante su análisis dado que afectan también a la planificación)
+- Limpieza de NAs: Se observan 227 servicios sin información de Sitio de Recalada.
+- Outliers: Se estima que un servicio con un adelanto mayor a 3 días o un retraso mayor a 5 días podría considerarse como un dato atípico. Sin embargo, se evaluará si su exclusión mejora el resultado del modelo. En el siguiente gráfico, el 0 representa el cumplimiento exacto en el día estimado:
 
-- Regla de cumplimiento nivel de servicio: Sí, Fecha Estimada = Fecha Efectiva, se asigna 1 a la columna cumple, de lo contrario 0.
-
-- De los 2.988 servicios totales, solamente el 36.2% cumplió con la Fecha Estimada.
-
-- Se observa una diferencia en el cumplimiento de Ingresos (41.2%) respecto a las salidas (31.1%)
+<img width="607" alt="Gráfico_Histograma_Atraoss:Adelantos" src="https://github.com/user-attachments/assets/63c91ae7-c32d-4a33-b15c-a25108b7ea44">
 
 - Luego se analizaron los cumplimientos en base a la Agencia y al Sitio de recalada. Previo, fue necesario generar mantenedores para homologar los datos (Ejemplo: ("AGENCIAS MARITIMAS AGENTAL LIMITADA", "AGENTAL") ~ "AGENTAL",)
-
 - Se observa una diferencia considerable entre el cumplimiento dependiendo de la Agencia y Sitio:
 
-<img width="562" alt="Cumplimiento_Agencia2" src="https://github.com/user-attachments/assets/b65573d7-c143-4399-8602-3c377adf64a1">
 
-<img width="560" alt="Cumplimiento_Sitio" src="https://github.com/user-attachments/assets/0d247bf4-7519-4552-bcf4-4e2f4b78fabd">
+## Correlación con Variables Temporales y Meteorológicas:
 
-- Se analizan otras variables relacionadas a la fecha, analizando el cumplimiento por mes, día del mes, día de la semana y período del mes (inicio, mitad, fin). La unica variablidad detectada es en función del día de la semana, por lo cual se incorporará esta variable al modelo predictivo.
 
-- Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA,  Cluster_SITIO y weekday
+
+
+- Finalmente se realizará un modelo predictivo en base a las variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO
 
 # Modelo Predictivo Cumplimiento de Fechas Estimadas
 
