@@ -68,29 +68,30 @@ This project analyzes the berthing data at the Port of San Antonio. Predictive m
 
   <img width="720" alt="Screenshot 2024-09-05 at 22 29 53" src="https://github.com/user-attachments/assets/dddb14ae-448b-4fcd-8034-9a00537545cb">
 
-# Modelo Predictivo Cumplimiento de Fechas Estimadas
+# Predictive Model for Estimated On-Time Service Level
 
-El modelo predictivo se basa en las siguientes variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO.
+The predictive model is based on the following variables: Entry or Exit, Cluster_AGENCY, and Cluster_SITE.
 
-División de Datos: Los datos se separaron en un conjunto de entrenamiento (80%) y un conjunto de prueba (20%).
+Data Split: The data was divided into a training set (80%) and a test set (20%).
 
-Modelos Evaluados:
+Evaluated Models:
 
-- Árbol de Decisión
+- Decision Tree
 - Random Forest
 - XGBoost
 
   <img width="621" alt="Screenshot 2024-09-05 at 22 43 06" src="https://github.com/user-attachments/assets/6349144d-5498-4577-8df2-b1bcb4713a63">
 
-- Mejor Desempeño: El modelo Random Forest mostró el mejor rendimiento, logrando predecir correctamente el 66% de los casos en la base de datos de prueba.
+- Best Performance: The Random Forest model showed the best performance, correctly predicting 66% of the cases in the test dataset.
 
-- Importancia de Variables: En el modelo XGBoost, la variable más relevante fue Cluster_AGENCIA (45%), seguida por Cluster_SITIO (44%) y, finalmente, Ingresos_Salida (11%).
+- Variable Importance: In the XGBoost model, the most important variable was Cluster_AGENCY (45%), followed by Cluster_SITE (44%), and finally, Entry_Exit (11%).
 
-Conclusiónes:
-1. Con las variables tipo de servicio (Ingreso/Salida), agencia y sitio de recalada, se logró elaborar un modelo que predice correctamente el 66% de los casos, aunque aún hay espacio para mejoras.
-2. La hipótesis inicial fue que las condiciones climáticas, como la velocidad del viento, su dirección y las precipitaciones, influirían en el cumplimiento del nivel de servicio.
-3. Sin embargo, no se pudo demostrar esta hipótesis de manera estadística.
-4. Próximos Pasos: Incorporar variables adicionales que puedan mejorar la precisión del modelo.
+Conclusions:
+
+1. Using the variables service type (Entry/Exit), agency, and berthing site, a model was developed that correctly predicts 66% of the cases, although there is still room for improvement.
+2. The initial hypothesis was that weather conditions, such as wind speed, direction, and precipitation, would influence service level compliance.
+3. However, this hypothesis could not be statistically demonstrated.
+4. Next Steps: Incorporate additional variables that could improve the model's accuracy.
 
 
 
