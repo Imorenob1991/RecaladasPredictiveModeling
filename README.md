@@ -47,31 +47,50 @@ Conclusiónes:
 ___________________________________________________________________________________________________________________________________________________________________________________
 
 # RecaladasPredictiveModeling (English)
-This project analyzes docking data at the Port of San Antonio(Chile), using predictive modeling techniques and statistical analysis to evaluate compliance with estimated entry and exit dates. It includes decision tree models, Random Forest, and XGBoost model to improve accuracy in predicting service levels.
+This project analyzes the berthing data at the Port of San Antonio. Predictive modeling techniques and statistical analysis have been used to evaluate the adherence to estimated entry and exit dates. The predictive models analyzed include decision trees, Random Forest, and XGBoost. The models were trained with 80% of the available data and then evaluated for accuracy using the remaining 20% of the dataset.
 
-# Descriptive analysis and data wrangling 
-- Date range of data between 2023-01-01 and 2024-08-21
+# Descriptive Analysis and Data Wrangling
+- Date Range: Data covers the period from 01-01-2023 to 21-08-2024.
+- Service Level Compliance: Compliance is considered achieved when the actual date is less than or equal to the estimated date.
+- Early Arrivals: Occur when the actual date is earlier than the estimated date. It is important to analyze them as they also affect planning.
+- NA Cleaning: 227 services were found to have missing information on the berthing site.
+- Outliers: A service with an early arrival of more than 3 days or a delay of more than 5 days is considered an outlier. It will be evaluated whether their exclusion improves the model results. In the following graph, the value 0 - represents exact compliance on the estimated day.
 
-- Service level rule: If the Estimated Date equals the Actual Date, a value of 1 is assigned to the "Cumple(compliance)" column; otherwise, 0 is assigned.
+  <img width="607" alt="Gráfico_Histograma_Atraoss:Adelantos" src="https://github.com/user-attachments/assets/63c91ae7-c32d-4a33-b15c-a25108b7ea44">
 
-- Out of the total 2,988 services, only 36.2% met the Estimated Date.
+- Analysis by Agency and Berthing Site: Compliance was analyzed according to the agency and berthing site. Previously, it was necessary to normalize the data for consistency (for example, "AGENCIAS MARITIMAS AGENTAL LIMITADA" was standardized to "AGENTAL").
+- Significant Differences: A considerable difference in compliance was observed depending on the agency and the berthing site.
 
-- There is a noticeable difference in compliance between Entries (41.2%) and Exits (31.1%).
+  <img width="560" alt="Screenshot 2024-09-05 at 22 20 52" src="https://github.com/user-attachments/assets/bc3ac583-ea50-42ab-a56c-b8ccdc254532"><img width="564" alt="Screenshot 2024-09-05 at 22 21 37" src="https://github.com/user-attachments/assets/4c800142-9397-490d-bf71-b3a1e26812cf">
 
-- Compliance was then analyzed based on the Agency and Docking Site. Before this, it was necessary to create data maintainers to standardize the data (Example: ("AGENCIAS MARITIMAS AGENTAL LIMITADA", "AGENTAL") ~ "AGENTAL").
+## Correlation with Temporal and Meteorological Variables:
+- Different variables were analyzed to determine if there was any correlation with service level compliance. The analysis did not yield significant results, as no relevant correlations with compliance were detected.
 
-- A considerable difference in compliance is observed depending on the Agency and Docking Site:
-
-<img width="562" alt="Cumplimiento_Agencia2" src="https://github.com/user-attachments/assets/e40717d1-a508-4d73-b374-586247d33de6">
-
-<img width="560" alt="Cumplimiento_Sitio" src="https://github.com/user-attachments/assets/9465083a-2e6d-40e6-b898-9749f361aec7">
-
-- Other date-related variables were analyzed, examining compliance by month, day of the month, day of the week, and period of the month (beginning, middle, end). The only variability detected was based on the day of the week, so this variable will be included in the predictive model.
-
-- Finally, a predictive model will be developed based on the following variables: Entry or Exit, Cluster_AGENCY, Cluster_SITE, and weekday.
+  <img width="720" alt="Screenshot 2024-09-05 at 22 29 53" src="https://github.com/user-attachments/assets/dddb14ae-448b-4fcd-8034-9a00537545cb">
 
 # Modelo Predictivo Cumplimiento de Fechas Estimadas
 
+El modelo predictivo se basa en las siguientes variables: Ingreso o Salida, Cluster_AGENCIA y Cluster_SITIO.
+
+División de Datos: Los datos se separaron en un conjunto de entrenamiento (80%) y un conjunto de prueba (20%).
+
+Modelos Evaluados:
+
+- Árbol de Decisión
+- Random Forest
+- XGBoost
+
+  <img width="621" alt="Screenshot 2024-09-05 at 22 43 06" src="https://github.com/user-attachments/assets/6349144d-5498-4577-8df2-b1bcb4713a63">
+
+- Mejor Desempeño: El modelo Random Forest mostró el mejor rendimiento, logrando predecir correctamente el 66% de los casos en la base de datos de prueba.
+
+- Importancia de Variables: En el modelo XGBoost, la variable más relevante fue Cluster_AGENCIA (45%), seguida por Cluster_SITIO (44%) y, finalmente, Ingresos_Salida (11%).
+
+Conclusiónes:
+1. Con las variables tipo de servicio (Ingreso/Salida), agencia y sitio de recalada, se logró elaborar un modelo que predice correctamente el 66% de los casos, aunque aún hay espacio para mejoras.
+2. La hipótesis inicial fue que las condiciones climáticas, como la velocidad del viento, su dirección y las precipitaciones, influirían en el cumplimiento del nivel de servicio.
+3. Sin embargo, no se pudo demostrar esta hipótesis de manera estadística.
+4. Próximos Pasos: Incorporar variables adicionales que puedan mejorar la precisión del modelo.
 
 
 
