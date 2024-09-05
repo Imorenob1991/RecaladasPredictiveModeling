@@ -5,52 +5,127 @@ library(readxl)
 library(ggplot2)
 library(dbplyr)
 library(forecast)
+library(kableExtra)
+
+# 1. Entendimiento General de los datos + limpieza de NAs y Outliers
 
 datos_recaladas <- read_excel("Recaladas_Puerto_San_Antonio.xlsx")
 glimpse(datos_recaladas)
+summary(datos_recaladas)
 colnames(datos_recaladas)
 
-### Fechas de la base de datos
+### Rango de fechas entre  01-01-2023 y 21-08-2024
 min(datos_recaladas$`FECHA EFECTIVA`)
 max(datos_recaladas$`FECHA EFECTIVA`)
 
-# 1. Atributos necesarios para la realización del modelo, Cumplimiento Fecha Estimada
-# 1.1 En caso de que Fecha Estimada = Fecha Efectiva, se considera que cumple el nivel de servicio. 
+### Atributos requeridos para el modelamiento
+### Sí , FECHA EFECTIVA <= FECHA ESTIMADA, se asigna 1 a la columna Cumple, de lo contrario 0
+### Adicionalmente, se pueden dar adelantos, en donde Fecha Efectiva < Fecha Estimada
 
 datos_recaladas$FECHA_ESTIMADA_DIA <- as.Date(datos_recaladas$`FECHA ESTIMADA`, tryFormats = c("%Y-%m-%d"))
 datos_recaladas$FECHA_EFECTIVA_DIA <- as.Date(datos_recaladas$`FECHA EFECTIVA`, tryFormats = c("%Y-%m-%d"))
 
 datos_recaladas <- datos_recaladas %>% 
-  mutate(Cumple = ifelse(FECHA_ESTIMADA_DIA == FECHA_EFECTIVA_DIA, 1, 0 ))
+  mutate(Cumple = ifelse(FECHA_ESTIMADA_DIA >= FECHA_EFECTIVA_DIA, 1, 0 ))
 
-# 2. Cumplimiento nivel de servicio
+datos_recaladas <- datos_recaladas %>% 
+  mutate(Dias_Atraso = ifelse(Cumple == 1, 0, FECHA_EFECTIVA_DIA - FECHA_ESTIMADA_DIA ))
 
-#2.1 Total - el 36.2% de los ingresos y salidas del puerto cumple la fecha estimada.
+datos_recaladas <- datos_recaladas %>% 
+  mutate(Adelanto = ifelse(FECHA_ESTIMADA_DIA > FECHA_EFECTIVA_DIA, 1, 0 ))
 
-datos_recaladas %>% 
-  group_by(Cumple) %>% 
+datos_recaladas <- datos_recaladas %>% 
+  mutate(Dias_Adelanto = ifelse(Adelanto == 1, FECHA_ESTIMADA_DIA - FECHA_EFECTIVA_DIA,0 ))
+
+datos_recaladas <- datos_recaladas %>% 
+  mutate(Diferencia = FECHA_EFECTIVA_DIA - FECHA_ESTIMADA_DIA)
+
+### Manejo de NA
+sum(is.na(datos_recaladas)) # 227 NA en la data
+sapply(datos_recaladas, function(x) sum(is.na(x))) #Filas sin SITIO de recalada
+datos_recaladas_limpio <- datos_recaladas %>% drop_na()
+
+### Datos Diferencia de días respecto a fecha estimada - Existe una gran dispersión en la diferencia entre la Fecha Estimada y Fecha Efectiva. Se analizarán posibles Outliers
+diferencial_dias <- datos_recaladas_limpio %>% 
+  group_by(Diferencia) %>% 
   summarise(Total = n()) %>% 
-  mutate( Porcentaje_Total = (Total/sum(Total)) * 100)
+  mutate(
+    Porcentaje = round((Total / sum(Total)) * 100, 3),  # Calcular porcentaje con 2 decimales
+    Porcentaje_Acumulado = round(cumsum(Porcentaje), 3) # Calcular porcentaje acumulado con 2 decimales
+  )
 
-#2.2 Cumplimiento en Ingreos y Salidas - 41.2% de los ingresos cumple fecha estimada y el 31.1% de las salidas.
+print(diferencial_dias)
 
-datos_recaladas %>% 
-  filter(`INGRESO O SALIDA` == "INGRESO") %>% 
-  group_by(Cumple) %>% 
-  summarise(Total = n()) %>% 
-  mutate( Porcentaje_Total = (Total/sum(Total)) * 100)            
+### Histograma Diferencia días respecto a fecha estimada
+Gráfico1 <- ggplot(datos_recaladas_limpio, aes(x = Diferencia)) + 
+  geom_histogram(binwidth = 1.0, fill = "blue", color = "black", alpha = 0.5) + 
+  geom_vline(xintercept = upper_threshold, color = "grey", linetype = "dashed", size = 0.5) + 
+  geom_vline(xintercept = lower_threshold, color = "grey", linetype = "dashed", size = 0.5) + 
+  labs(
+    title = "Histograma de Diferencia días Fecha Estimada vs Fecha Efectiva",
+    x = "Diferencia (días) - [Negativo(Adelantos)/Positivo(Atrasos)]",
+    y = "Frecuencia"
+  ) + 
+  theme_minimal()
 
-datos_recaladas %>% 
-  filter(`INGRESO O SALIDA` == "SALIDA") %>% 
-  group_by(Cumple) %>% 
-  summarise(Total = n()) %>% 
-  mutate( Porcentaje_Total = (Total/sum(Total)) * 100)   
+### Identificación de casos atípicos - regla de IQR*1.5 / NO APLICA
 
-# 2.3 Cuimplimiento en base a Agencia Responsable ¿Existe alguna direrencia significativa?
-# R: Sí, existe una diferencia relevante entre el cumplimiento y la Agencia a cargo del servicio.
+iqr<-IQR(datos_recaladas_limpio$Diferencia)
+first <- quantile(datos_recaladas_limpio$Diferencia,prob= 0.25)
+third <- quantile(datos_recaladas_limpio$Diferencia,prob= 0.75)
+upper_threshold<- third+1.5*iqr
+lower_threshold<- first-1.5*iqr
+
+### Se considera estadísticamente casos atípicos valores con Adelantos mayores a 3 días y Atrasos mayores a 5 días.
+### Recaladas con Adelantos mayores a 3 días: TBD Casos
+### REcaladas con Atrasos mayores a 5 días: TBD Casos
+
+outlier_function <- function(x) {
+  iqr <- IQR(x, na.rm = TRUE)
+  first <- quantile(x, probs = 0.25, na.rm = TRUE)
+  third <- quantile(x, probs = 0.75, na.rm = TRUE)
+  upper_threshold <- third + 1.5 * iqr
+  lower_threshold <- first - 1.5 * iqr
+  upper_outliers <- x[x > upper_threshold]
+  lower_outliers <- x[x < lower_threshold]
+  upper_outlier_count <- length(upper_outliers)
+  lower_outlier_count <- length(lower_outliers)
+  
+  outlier <- list(
+    upper_outlier_count = upper_outlier_count,
+    lower_outlier_count = lower_outlier_count,
+    upper_outliers = upper_outliers,
+    lower_outliers = lower_outliers,
+    upper_threshold = upper_threshold,
+    lower_threshold = lower_threshold
+  )
+  
+  return(outlier)
+}
+
+resultados_outliers <- outlier_function(datos_recaladas_limpio$Diferencia)
+
+### Base de dato excluyendo Casos atípicos
+
+# datos_recaladas_limpio <- datos_recaladas_limpio %>% 
+  # filter(Diferencia < 5 & Diferencia > -3)
+
+### Histograma base de datos sin NA y Casos Atípicos
+Gráfico2 <- ggplot(datos_recaladas_limpio, aes(x = Diferencia)) + 
+  geom_histogram(binwidth = 1.0, fill = "blue", color = "black", alpha = 0.5) + 
+  labs(
+    title = "Histograma de Diferencia días Fecha Estimada vs Fecha Efectiva",
+    x = "Diferencia (días) - [Negativo(Adelantos)/Positivo(Atrasos)]",
+    y = "Frecuencia"
+  ) + 
+  theme_minimal()
+
+table(datos_recaladas_limpio$Diferencia)
+
+# 2. Generación de nuevos atributos y cruce con base de dato meteorológica del día Estiado (Velocidad y dirección Viento)
 
 ### Generar un cluster para las AGENCIAS
-datos_recaladas <- datos_recaladas %>%
+datos_recaladas_limpio <- datos_recaladas_limpio %>%
   mutate(Cluster_AGENCIA = case_when(
     AGENCIA %in% c("AGENCIAS MARITIMAS AGENTAL LIMITADA", "AGENTAL") ~ "AGENTAL",
     AGENCIA == "AGENCIAS UNIVERSALES S.A." ~ "AGENCIAS UNIVERSALES",
@@ -69,25 +144,32 @@ datos_recaladas <- datos_recaladas %>%
     TRUE ~ "Otros"  # Para cualquier agencia que no coincida con los anteriores
   ))
 
-### Validación de Cluster
-Cluster_Agencias <- datos_recaladas %>% 
+### Validación de Cluster Agencias
+Cluster_Agencias <- datos_recaladas_limpio %>% 
   group_by(AGENCIA, Cluster_AGENCIA) %>% 
   summarise(servicios = n()) %>% 
   arrange(desc(servicios))
 
 ### Cumplimiento de la fecha estimada según AGENCIA
-Cumplimiento_AGENCIAS <- datos_recaladas %>% 
+Cumplimiento_AGENCIAS <- datos_recaladas_limpio %>% 
   group_by(Cluster_AGENCIA) %>% 
   summarise(Servicios_Totales = n(),
             Cumplimiento = sum(Cumple)) %>% 
   mutate(Porcentaje_Cumplimiento = round(Cumplimiento / Servicios_Totales * 100, 2)) %>% 
   arrange(desc(Porcentaje_Cumplimiento))
 
-# 2.4 Cuimplimiento en base a Puerto de Recalada (SITIO) ¿Existe alguna direrencia significativa?
-# R: Existe una diferencia significativa en función del sitio de Recalada.
+### El cumplimiento varía de manera considerable dependiendo de la AGENCIA (Considerar en el modelo)
 
-### Generar un cluster para las Sitios de Recaladas
-datos_recaladas <- datos_recaladas %>%
+### Tabla resumen Cumplimiento_Agencias
+Cumplimiento_AGENCIAS %>%
+  mutate(across(everything(), ~ cell_spec(., align = "center"))) %>%
+  kable("html", escape = FALSE, table.attr = "style='width:50%; margin-left:auto; margin-right:auto;'") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, align = "center")  # Center header
+
+
+### Generar un cluster para las Sitios
+datos_recaladas_limpio <- datos_recaladas_limpio %>%
   mutate(Cluster_SITIOS = case_when(
     grepl("PUERTO DE SAN ANTONIO", SITIO) ~ "Puerto de San Antonio",
     grepl("TERMINAL COSTANERA", SITIO) ~ "Terminal Costanera",
@@ -100,28 +182,37 @@ datos_recaladas <- datos_recaladas %>%
     TRUE ~ "Otros"  # Para cualquier sitio que no coincida con los anteriores
   ))
 
-### Validación de Cluster
-Cluster_SITIO <- datos_recaladas %>% 
+### Validación de Cluster Sitios
+Cluster_SITIO <- datos_recaladas_limpio %>% 
   group_by(SITIO, Cluster_SITIOS) %>% 
   summarise(servicios = n()) %>% 
   arrange(desc(servicios))
 
-### Cumplimiento de la fecha estimada según AGENCIA
-Cumplimiento_SITIO <- datos_recaladas %>% 
+### Cumplimiento de la fecha estimada según SITIO
+Cumplimiento_SITIO <- datos_recaladas_limpio %>% 
   group_by(Cluster_SITIOS) %>% 
   summarise(Servicios_Totales = n(),
             Cumplimiento = sum(Cumple)) %>% 
   mutate(Porcentaje_Cumplimiento = round(Cumplimiento / Servicios_Totales * 100, 2)) %>% 
   arrange(desc(Porcentaje_Cumplimiento))
 
-# 2.4 ¿Existe una mayor o menor probabilidad de cumplimiento dependiendo del meso día estimado del servicio?
-# R: No se reconoce una diferencia significativa entre el día o mes del servicio y su porcentaje de cumplimiento.
+### El cumplimiento varía de manera considerable dependiendo de la SITIO de Recalada (Considerar en el modelo)
 
-datos_recaladas$mes_estimado <- month(datos_recaladas$`FECHA ESTIMADA`)
-datos_recaladas$día_estimado <- day(datos_recaladas$`FECHA ESTIMADA`)
-datos_recaladas$weekday <- wday(datos_recaladas$`FECHA ESTIMADA`)
+### Tabla resumen Cumplimiento_Sitio
+Cumplimiento_SITIO %>%
+  mutate(across(everything(), ~ cell_spec(., align = "center"))) %>%
+  kable("html", escape = FALSE, table.attr = "style='width:50%; margin-left:auto; margin-right:auto;'") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  row_spec(0, align = "center")  # Center header
 
-datos_recaladas <- datos_recaladas %>%
+
+### Atributos de Fecha - Mes / Día_Mes / Día_semana / Periodo_Mes
+
+datos_recaladas_limpio$mes_estimado <- month(datos_recaladas_limpio$`FECHA ESTIMADA`)
+datos_recaladas_limpio$día_estimado <- day(datos_recaladas_limpio$`FECHA ESTIMADA`)
+datos_recaladas_limpio$weekday <- wday(datos_recaladas_limpio$`FECHA ESTIMADA`)
+
+datos_recaladas_limpio <- datos_recaladas_limpio %>%
   mutate(Cluster_Día = case_when(
     día_estimado >= 1 & día_estimado <= 10 ~ "Inicio Mes",
     día_estimado >= 11 & día_estimado <= 20 ~ "Medio Mes",
@@ -129,53 +220,47 @@ datos_recaladas <- datos_recaladas %>%
     TRUE ~ "Desconocido"  # Esto es solo una medida de seguridad en caso de días fuera del rango
   ))
 
-### Variabilidad de cumplimiento según mes
-Cumplimiento_mensual <- datos_recaladas %>% 
-  group_by(mes_estimado) %>% 
-  summarise(Servicios_Totales = n(),
-            Cumplimiento = sum(Cumple)) %>% 
-  mutate(Porcentaje_Cumplimiento = round(Cumplimiento / Servicios_Totales * 100, 2)) %>% 
-  arrange(mes_estimado)
+### Sumar Viento y Lluvias al modelo
 
-### Variabilidad de cumplimiento según día del mes
-Cumplimiento_diario <- datos_recaladas %>% 
-  group_by(día_estimado) %>% 
-  summarise(Servicios_Totales = n(),
-            Cumplimiento = sum(Cumple)) %>% 
-  mutate(Porcentaje_Cumplimiento = round(Cumplimiento / Servicios_Totales * 100, 2)) %>% 
-  arrange(día_estimado)
+datos_recaladas_limpio <- datos_recaladas_limpio %>% 
+  left_join(datos_meteorológicos_final, by = c("FECHA_ESTIMADA_DIA" = "date"))
 
-### Variabilidad de cumplimiento según día de la semana
-Cumplimiento_wday <- datos_recaladas %>% 
-  group_by(weekday) %>% 
-  summarise(Servicios_Totales = n(),
-            Cumplimiento = sum(Cumple)) %>% 
-  mutate(Porcentaje_Cumplimiento = round(Cumplimiento / Servicios_Totales * 100, 2)) %>% 
-  arrange(weekday)
+names(datos_recaladas_limpio)[names(datos_recaladas_limpio) == 'INGRESO O SALIDA'] <- 'Ingreso_Salida'
 
-### Variabilidad de cumplimiento según etapa del mes (Inicio/Mitad/Fin)
-Cumplimiento_diario_cluster <- datos_recaladas %>% 
-  group_by(Cluster_Día) %>% 
-  summarise(Servicios_Totales = n(),
-            Cumplimiento = sum(Cumple)) %>% 
-  mutate(Porcentaje_Cumplimiento = round(Cumplimiento / Servicios_Totales * 100, 2))
+# 3. Análisis de correlación de variables independientes (Numpéricas) con el Atributo Cumple nivel de servicio
 
-# 3. Vamos a crear un modelo de predicción usando las variables: Ingreso o Salida / Cluster Agencia / Cluster Sitio.
+glimpse(datos_recaladas_limpio)
 
-modelo_datos_recaladas <- datos_recaladas %>% 
-  select(`INGRESO O SALIDA`, Cluster_AGENCIA, Cluster_SITIOS, FECHA_ESTIMADA_DIA, FECHA_EFECTIVA_DIA, Cumple)
+corr_df <- datos_recaladas_limpio %>% 
+  select(Ingreso_Salida,Cluster_AGENCIA,Cluster_SITIOS,FECHA_ESTIMADA_DIA,FECHA_EFECTIVA_DIA,mes_estimado,día_estimado,weekday,tavg,prcp,wdir,wspd,Lluvia,Viento_Fuerte,Cumple)
 
-### write.csv(modelo_datos_recaladas,"modelo_datos_recaladas.csv")
+glimpse(corr_df)
+
+### Análisis de Correlación con variables Contínuas , no Categóricas
+
+correlation <- cor(corr_df[,c(6,7,8,9,10,11,12,13,14,15)])
+correlation
+
+library(corrplot)
+
+corrplot(correlation, method = "circle")
+corrplot(correlation, method = "number")
+
+# No se ven grandes correlaciones para incoporar estas variables al modelo.
+# 4. Vamos a crear un modelo de predicción usando las variables: Ingreso_Salida / Cluster Agencia / Cluster Sitio - sin excluir los Outliers.
+
+modelo_datos_recaladas <- corr_df %>% 
+select(Ingreso_Salida, Cluster_AGENCIA, Cluster_SITIOS, FECHA_ESTIMADA_DIA, FECHA_EFECTIVA_DIA,Cumple)
 
 glimpse(modelo_datos_recaladas)
 
-# 4. Separar nuestra data en entrenamiento (80%) y prueba (20%)
+### Separar nuestra data en entrenamiento (80%) y prueba (20%)
 
-# install.packages("caret")
-# install.packages("rpart")
-# install.packages("randomForest")
-install.packages("rpart.plot")
-install.packages("rattle")
+### install.packages("caret")
+### install.packages("rpart")
+### install.packages("randomForest")
+### install.packages("rpart.plot")
+### install.packages("rattle")
 
 library(caret)
 library(rpart)
@@ -183,14 +268,15 @@ library(randomForest)
 library(rpart.plot)
 library(rattle)
 
-set.seed(42)  # Fijar la semilla para reproducibilidad
+set.seed(42)
 
 glimpse(modelo_datos_recaladas)
 
-modelo_datos_recaladas$`INGRESO O SALIDA` <- as.factor(modelo_datos_recaladas$`INGRESO O SALIDA`)
+### Transformar Atributos a Factores
+modelo_datos_recaladas$Ingreso_Salida <- as.factor(modelo_datos_recaladas$Ingreso_Salida)
 modelo_datos_recaladas$Cluster_AGENCIA <- as.factor(modelo_datos_recaladas$Cluster_AGENCIA)
 modelo_datos_recaladas$Cluster_SITIOS <- as.factor(modelo_datos_recaladas$Cluster_SITIOS)
-modelo_datos_recaladas$Cumple <- as.factor(modelo_datos_recaladas$Cumple)  # Variable objetivo
+modelo_datos_recaladas$Cumple <- as.factor(modelo_datos_recaladas$Cumple)  
 
 trainIndex <- createDataPartition(modelo_datos_recaladas$Cumple, p = 0.8, 
                                   list = FALSE, 
@@ -198,10 +284,6 @@ trainIndex <- createDataPartition(modelo_datos_recaladas$Cumple, p = 0.8,
 
 datos_train <- modelo_datos_recaladas[trainIndex, ]
 datos_test <- modelo_datos_recaladas[-trainIndex, ]
-
-names(modelo_datos_recaladas)[names(modelo_datos_recaladas) == 'INGRESO O SALIDA'] <- 'Ingreso_Salida'
-names(datos_train)[names(datos_train) == 'INGRESO O SALIDA'] <- 'Ingreso_Salida'
-names(datos_test)[names(datos_test) == 'INGRESO O SALIDA'] <- 'Ingreso_Salida'
 
 cat("Tamaño del conjunto de entrenamiento:", nrow(datos_train), "\n")
 cat("Tamaño del conjunto de prueba:", nrow(datos_test), "\n")
@@ -313,66 +395,13 @@ balanced_accuracy_xg <- matriz_confusion_xg$byClass['Balanced Accuracy']
 
 # Crear un data frame de resumen comparativo
 resumen_comparativo <- data.frame(
-  Modelo = c('Árbol de Decisión', 'Random Forest','Modelo XG'),
-  Accuracy = c(accuracy_arbol, accuracy_rf,accuracy_xg),
-  Sensitivity = c(sensitivity_arbol, sensitivity_rf,sensitivity_xg),
-  Specificity = c(specificity_arbol, specificity_rf,specificity_xg),
-  Kappa = c(kappa_arbol, kappa_rf,kappa_xg),
-  BalancedAccuracy = c(balanced_accuracy_arbol, balanced_accuracy_rf,balanced_accuracy_xg)
+  Modelo = c('Árbol de Decisión', 'Random Forest', 'Modelo XG'),
+  Accuracy = c(accuracy_arbol, accuracy_rf, accuracy_xg),
+  Sensitivity = c(sensitivity_arbol, sensitivity_rf, sensitivity_xg),
+  Specificity = c(specificity_arbol, specificity_rf, specificity_xg),
+  Kappa = c(kappa_arbol, kappa_rf, kappa_xg),
+  BalancedAccuracy = c(balanced_accuracy_arbol, balanced_accuracy_rf, balanced_accuracy_xg)
 )
 
-# 8. Probar el modelo con datos Ficticios
-
-### Crear un archivo
-
-# Establecer la semilla para reproducibilidad
-set.seed(42)
-
-# Definir el número de filas
-num_rows <- 100
-
-# Definir las categorías para las columnas categóricas
-categorias_agencia <- c('INCHCAPE', 'MSC', 'IAN TAYLOR', 'B & M AGENCIA MARITIMA', 'ULTRAMAR')
-categorias_sitios <- c('EPSA', 'STI (Terminal Int.)', 'Terminal Costanera', 'PANUL', 'DP World')
-
-# Generar datos aleatorios
-Ingreso_Salida <- sample(c('INGRESO', 'SALIDA'), size = num_rows, replace = TRUE)
-Cluster_AGENCIA <- sample(categorias_agencia, size = num_rows, replace = TRUE)
-Cluster_SITIOS <- sample(categorias_sitios, size = num_rows, replace = TRUE)
-FECHA_ESTIMADA_DIA <- seq.Date(from = as.Date('2024-01-01'), by = 'day', length.out = num_rows)
-FECHA_EFECTIVA_DIA <- FECHA_ESTIMADA_DIA + sample(0:5, size = num_rows, replace = TRUE)
-
-# Crear un data frame sin la columna 'Cumple'
-prueba_prediccion <- data.frame(
-  Ingreso_Salida,
-  Cluster_AGENCIA,
-  Cluster_SITIOS,
-  FECHA_ESTIMADA_DIA,
-  FECHA_EFECTIVA_DIA
-)
-
-prueba_prediccion2 <- prueba_prediccion
-
-# Convertir variables categóricas a numéricas
-prueba_prediccion2$Ingreso_Salida <- as.numeric(as.factor(prueba_prediccion2$Ingreso_Salida))
-prueba_prediccion2$Cluster_AGENCIA <- as.numeric(as.factor(prueba_prediccion2$Cluster_AGENCIA))
-prueba_prediccion2$Cluster_SITIOS <- as.numeric(as.factor(prueba_prediccion2$Cluster_SITIOS))
-
-prueba_prediccion2 <- prueba_prediccion2[, !(colnames(prueba_prediccion2) %in% c("FECHA_ESTIMADA_DIA", "FECHA_EFECTIVA_DIA"))]
-
-pred_matrix <- xgb.DMatrix(data = as.matrix(prueba_prediccion2))
-
-predicciones <- predict(modelo_xgb, pred_matrix)
-
-predicciones_binarias <- ifelse(predicciones > 0.5, 1, 0)
-
-print(predicciones_binarias)
-
-df_predicciones <- data.frame(Predicciones = predicciones_binarias)
-
-# Resultado Final, Anexar la prdicción al a base de datos de prueba_predicción.
-
-df_resultante <- cbind(prueba_prediccion, df_predicciones)
-
-write.csv(df_resultante,"df_resultante.csv")
-
+resumen_comparativo <- resumen_comparativo %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
