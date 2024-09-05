@@ -1,5 +1,5 @@
 # RecaladasPredictiveModeling (Spanish)
-Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se utilizaron técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de fechas estimadas de ingreso y salida. Se analizaron los siguientes modelos predictivos: árboles de decisión, Random Forest y XGBoost. Se entrenan los modelos con el 80% de la base de datos y luego se prueba su asertividad con el 20% de la base de datos de prueba.
+Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se utilizaron técnicas de modelamiento predictivo y análisis estadístico para evaluar el cumplimiento de fechas estimadas de ingreso y salida. Se analizaron los siguientes modelos predictivos: árboles de decisión, Random Forest y XGBoost. Se entrenan los modelos con el 80% de la base de datos y luego se prueba su asertividad con el 20% de la base de datos restante.
 
 # Análisis Descriptivo y Preparación de los Datos:
 - Rango de fecha datos entre el 2023-01-01 al 2024-08-21
