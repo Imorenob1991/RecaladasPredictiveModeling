@@ -10,7 +10,7 @@ Este proyecto analiza los datos de recaladas en el Puerto de San Antonio. Se han
 
   <img width="607" alt="Gráfico_Histograma_Atraoss:Adelantos" src="https://github.com/user-attachments/assets/63c91ae7-c32d-4a33-b15c-a25108b7ea44">
 
-- Análisis por Agencia y Sitio de Recalada: Se analizaron los cumplimientos según la agencia y el sitio de recalada. Previamente, fue necesario normalizar los datos para homogeneizarlos (por ejemplo, "AGENCIAS MARITIMAS AGENTAL LIMITADA" se normaliza a "AGENTAL").
+- Análisis por Agencia y Sitio de Recalada: Se analizaron los cumplimientos según la agencia y el sitio de recalada. Previamente, fue necesario normalizar los datos para normalisarlos (por ejemplo, "AGENCIAS MARITIMAS AGENTAL LIMITADA" se normaliza a "AGENTAL").
 - Diferencias Significativas: Se observó una diferencia considerable en el cumplimiento dependiendo de la agencia y el sitio:
 
   <img width="560" alt="Screenshot 2024-09-05 at 22 20 52" src="https://github.com/user-attachments/assets/bc3ac583-ea50-42ab-a56c-b8ccdc254532"><img width="564" alt="Screenshot 2024-09-05 at 22 21 37" src="https://github.com/user-attachments/assets/4c800142-9397-490d-bf71-b3a1e26812cf">
